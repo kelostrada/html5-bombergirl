@@ -29,6 +29,7 @@ GameEngine = Class.extend({
     soundtrackLoaded: false,
     soundtrackPlaying: false,
     soundtrack: null,
+	getPlayerList: false,
 
     init: function() {
         this.size = {
@@ -44,6 +45,23 @@ GameEngine = Class.extend({
 			var player = new Player(data, null, data.id);
 			that.cleanTerrainForPlayer(player);
 			that.players.push(player);
+		});
+
+		socket.on('playerDie', function (id) {
+			var player = _.find(that.players, {id: id});
+			player.die(true);
+		});
+
+		socket.on('playersList', function (data) {
+		    console.log('playersList', data);
+		    if(this.getPlayerList) {
+		        _.forEach(this.getPlayerList, function(data) {
+					var player = new Player(data, null, data.id);
+					that.cleanTerrainForPlayer(player);
+					that.players.push(player);
+                });
+				this.getPlayerList = false;
+            }
 		});
 
 		socket.on('wood', function (data) {
@@ -335,7 +353,10 @@ GameEngine = Class.extend({
 		newPlayer.id = player.id;
 		this.activePlayerId = player.id;
 
-		socket.emit('newPlayer', newPlayer);
+		if(this.playing) {
+			socket.emit('newPlayer', newPlayer);
+        }
+
 		this.cleanTerrainForPlayer(player);
 		this.players.push(player);
 
@@ -419,6 +440,8 @@ GameEngine = Class.extend({
     },
 
     restart: function() {
+        this.getPlayerList = true;
+        socket.emit('getPlayerList');
         gInputEngine.removeAllListeners();
         gGameEngine.stage.removeAllChildren();
         gGameEngine.setup();

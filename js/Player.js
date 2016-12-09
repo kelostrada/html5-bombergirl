@@ -399,17 +399,22 @@ Player = Entity.extend({
         }
     },
 
-    die: function() {
+    die: function(otherUser) {
         this.alive = false;
 
-        if (gGameEngine.countPlayersAlive() == 1 && gGameEngine.playersCount == 2) {
-            gGameEngine.gameOver('win');
-        } else if (gGameEngine.countPlayersAlive() == 0) {
-            gGameEngine.gameOver('lose');
+		if(!otherUser) {
+            if (gGameEngine.countPlayersAlive() == 1 && gGameEngine.playersCount == 2) {
+                gGameEngine.gameOver('win');
+            } else if (gGameEngine.countPlayersAlive() == 0) {
+                gGameEngine.gameOver('lose');
+            }
+
+            this.bmp.gotoAndPlay('dead');
+			socket.emit('playerDie', this.id);
         }
 
-        this.bmp.gotoAndPlay('dead');
-        this.fade();
+		this.fade();
+
     },
 
     fade: function() {

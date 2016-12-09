@@ -212,7 +212,7 @@ GameEngine = Class.extend({
                     this.stage.addChild(wood.bmp);
                     this.tiles.push(wood);
 
-                    socket.emit('bomb', pos);
+                    socket.emit('wood', pos);
                 }
             }
         }

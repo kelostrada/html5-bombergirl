@@ -49,8 +49,8 @@ GameEngine = Class.extend({
 		socket.on('wood', function (data) {
 			var wood = new Tile('wood', data);
 
-			this.stage.addChild(wood.bmp);
-			this.tiles.push(wood);
+			that.stage.addChild(wood.bmp);
+			that.tiles.push(wood);
 		});
 	},
 

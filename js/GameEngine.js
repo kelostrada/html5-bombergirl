@@ -295,7 +295,7 @@ GameEngine = Class.extend({
         this.bots = [];
 
         for (var i = 0; i < this.botsCount; i++) {
-          var bot = new Bot({ x: Math.floor((Math.random() * gGameEngine.tilesX) + 1), y: Math.floor((Math.random() * gGameEngine.tilesY) + 1) });
+          var bot = new Bot({ x: Math.floor((Math.random() * gGameEngine.tilesX - 1) + 1), y: Math.floor((Math.random() * gGameEngine.tilesY - 1) + 1) });
           this.cleanTerrainForPlayer(bot);
           this.bots.push(bot);
         }
@@ -305,7 +305,7 @@ GameEngine = Class.extend({
         this.players = [];
 
         if (this.playersCount >= 1) {
-            var player = new Player({ x: Math.floor((Math.random() * gGameEngine.tilesX) + 1), y: Math.floor((Math.random() * gGameEngine.tilesY) + 1) });
+            var player = new Player({ x: Math.floor((Math.random() * gGameEngine.tilesX - 1) + 1), y: Math.floor((Math.random() * gGameEngine.tilesY - 1) + 1) });
             this.cleanTerrainForPlayer(player);
             this.players.push(player);
         }

@@ -170,11 +170,52 @@ GameEngine = Class.extend({
             bomb.update();
         }
 
+        // World
+        // iterate over all tiles and recreate wood after some random Timeout
+        gGameEngine.respawnWood();
+
         // Menu
         gGameEngine.menu.update();
 
         // Stage
         gGameEngine.stage.update();
+    },
+
+    respawnWood: function() {
+        for (var i = 0; i < this.tilesY; i++) {
+            for (var j = 0; j < this.tilesX; j++) {
+                var tileMaterial = this.getTileMaterial({ x: j, y: i });
+
+                if(tileMaterial == "grass" && this.checkMinimumDistanceBetweenPlayers({ x: j, y: i }) && Math.random() > 0.99){
+                    var wood = new Tile('wood', { x: j, y: i });
+
+                    this.stage.addChild(wood.bmp);
+                    this.tiles.push(wood);
+                }
+            }
+        }
+    },
+
+    checkMinimumDistanceBetweenPlayers: function(pos) {
+        for (var i = 0; i < gGameEngine.players.length; i++) {
+            var player = gGameEngine.players[i];
+            
+            var playersDist = Utils.distance(player.position, pos);
+            if(playersDist < 5) {
+                return false;
+            }
+        }
+
+        for (var i = 0; i < gGameEngine.bots.length; i++) {
+            var bot = gGameEngine.bots[i];
+            
+            var botsDist = Utils.distance(bot.position, pos);
+            if(botsDist < 5) {
+                return false;
+            }
+        }
+
+        return true;
     },
 
     drawTiles: function() {

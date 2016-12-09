@@ -50,8 +50,8 @@ Menu = Class.extend({
             gGameEngine.botsCount = 3;
             gGameEngine.playersCount = 1;
         } else {
-            gGameEngine.botsCount = 2;
-            gGameEngine.playersCount = 2;
+            gGameEngine.botsCount = 0;
+            gGameEngine.playersCount = 1;
         }
 
         gGameEngine.playing = true;
@@ -75,13 +75,13 @@ Menu = Class.extend({
 
         var titleWidth = title1.getMeasuredWidth() + title2.getMeasuredWidth();
 
-        title1.x = gGameEngine.size.w / 2 - titleWidth / 2;
-        title1.y = gGameEngine.size.h / 2 - title1.getMeasuredHeight() / 2 - 80;
+        title1.x = gGameEngine.stage.canvas.width / 2 - titleWidth / 2;
+        title1.y = gGameEngine.stage.canvas.height / 2 - title1.getMeasuredHeight() / 2 - 80;
         gGameEngine.stage.addChild(title1);
         this.views.push(title1);
 
         title2.x = title1.x + title1.getMeasuredWidth();
-        title2.y = gGameEngine.size.h / 2 - title1.getMeasuredHeight() / 2 - 80;
+        title2.y = gGameEngine.stage.canvas.height / 2 - title1.getMeasuredHeight() / 2 - 80;
         gGameEngine.stage.addChild(title2);
         this.views.push(title2);
 
@@ -91,7 +91,7 @@ Menu = Class.extend({
         var modesY = title1.y + title1.getMeasuredHeight() + 40;
 
         // singleplayer button
-        var singleX = gGameEngine.size.w / 2 - modeSize - modesDistance;
+        var singleX = gGameEngine.stage.canvas.width / 2 - modeSize - modesDistance;
         var singleBgGraphics = new createjs.Graphics().beginFill("rgba(0, 0, 0, 0.5)").drawRect(singleX, modesY, modeSize, modeSize);
         var singleBg = new createjs.Shape(singleBgGraphics);
         gGameEngine.stage.addChild(singleBg);
@@ -125,7 +125,7 @@ Menu = Class.extend({
         this.views.push(singleIcon);
 
         // multiplayer button
-        var multiX = gGameEngine.size.w / 2 + modesDistance;
+        var multiX = gGameEngine.stage.canvas.width / 2 + modesDistance;
         var multiBgGraphics = new createjs.Graphics().beginFill("rgba(0, 0, 0, 0.5)").drawRect(multiX, modesY, modeSize, modeSize);
         var multiBg = new createjs.Shape(multiBgGraphics);
         gGameEngine.stage.addChild(multiBg);
@@ -170,8 +170,8 @@ Menu = Class.extend({
         gGameEngine.stage.addChild(bg);
 
         var loadingText = new createjs.Text("Loading...", "20px Helvetica", "#FFFFFF");
-        loadingText.x = gGameEngine.size.w / 2 - loadingText.getMeasuredWidth() / 2;
-        loadingText.y = gGameEngine.size.h / 2 - loadingText.getMeasuredHeight() / 2;
+        loadingText.x = gGameEngine.stage.canvas.width / 2 - loadingText.getMeasuredWidth() / 2;
+        loadingText.y = gGameEngine.stage.canvas.height / 2 - loadingText.getMeasuredHeight() / 2;
         gGameEngine.stage.addChild(loadingText);
         gGameEngine.stage.update();
     }

@@ -378,6 +378,9 @@ GameEngine = Class.extend({
     gameOver: function(status) {
         if (gGameEngine.menu.visible) { return; }
 
+        this.stage.regX = 0;
+        this.stage.regY = 0;
+
         if (status == 'win') {
             var winText = "You won!";
             if (gGameEngine.playersCount > 1) {

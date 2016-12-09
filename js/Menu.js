@@ -64,7 +64,7 @@ Menu = Class.extend({
         var wallSize = 10 * gGameEngine.tileSize;
 
         // semi-transparent black background
-        var bgGraphics = new createjs.Graphics().beginFill("rgba(0, 0, 0, 0.5)").drawRect(-wallSize, -wallSize, gGameEngine.size.w + wallSize*2, gGameEngine.size.h + wallSize*2);
+        var bgGraphics = new createjs.Graphics().beginFill("rgba(0, 0, 0, 0.5)").drawRect(-wallSize, -wallSize, gGameEngine.size.w + wallSize * 2, gGameEngine.size.h + wallSize * 2);
         var bg = new createjs.Shape(bgGraphics);
         gGameEngine.stage.addChild(bg);
         this.views.push(bg);

@@ -1,7 +1,10 @@
 process.title = 'localhost server app';
-var app = require('express');
-var http = require('http').createServer(app);
-var io = require('socket.io').listen(http);
+var express = require('express');
+var app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io').listen(server);
+
+app.use(express.static(__dirname+'/..'))
 
 io.sockets.on('connection', function (socket) {
 
@@ -11,6 +14,6 @@ io.sockets.on('connection', function (socket) {
 
 });
 
-http.listen(4001, function () {
+server.listen(4001, function () {
 	console.log('listening on *:4001');
 });

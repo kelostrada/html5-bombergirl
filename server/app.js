@@ -12,6 +12,10 @@ io.sockets.on('connection', function (socket) {
 		socket.broadcast.emit('bomb', data);
 	});
 
+	socket.on('wood', function (data) {
+		socket.broadcast.emit('wood', data);
+	});
+
 });
 var port = (process.env.PORT || 4001);
 server.listen(port, function () {

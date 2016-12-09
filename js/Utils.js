@@ -7,6 +7,13 @@ Utils.comparePositions = function(pos1, pos2) {
     return pos1.x == pos2.x && pos1.y == pos2.y;
 };
 
+Utils.distance = function(pos1, pos2) {
+    var x = Math.pow(pos1.x - pos2.x, 2);
+    var y = Math.pow(pos1.y - pos2.y, 2);
+
+    return Math.sqrt(x + y)
+};
+
 
 /**
  * Convert bitmap pixels position to entity on grid position.

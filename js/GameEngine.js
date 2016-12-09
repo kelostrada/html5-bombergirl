@@ -37,16 +37,22 @@ GameEngine = Class.extend({
         };
     },
 
-    setWSListener: function() {
+	setWSListener: function() {
 		var that = this;
+
+		socket.on('newPlayer', function (data) {
+			var player = new Player(data, null, data.id);
+			that.cleanTerrainForPlayer(player);
+			that.players.push(player);
+		});
 
 		socket.on('wood', function (data) {
 			var wood = new Tile('wood', data);
 
-            this.stage.addChild(wood.bmp);
-            this.tiles.push(wood);
+			this.stage.addChild(wood.bmp);
+			this.tiles.push(wood);
 		});
-    },
+	},
 
     load: function() {
         // Init canvas
@@ -88,7 +94,7 @@ GameEngine = Class.extend({
         // Create menu
         this.menu = new Menu();
 
-        this.setWSListener();
+		this.setWSListener();
     },
 
     setup: function() {
@@ -320,25 +326,19 @@ GameEngine = Class.extend({
     spawnPlayers: function() {
         this.players = [];
 
-        if (this.playersCount >= 1) {
-            var player = new Player({ x: Math.floor((Math.random() * gGameEngine.tilesX - 1) + 1), y: Math.floor((Math.random() * gGameEngine.tilesY - 1) + 1) });
-            this.cleanTerrainForPlayer(player);
-            this.players.push(player);
-        }
+		var params = {
+		    x: Math.floor((Math.random() * gGameEngine.tilesX - 1) + 1),
+            y: Math.floor((Math.random() * gGameEngine.tilesY - 1) + 1)
+		};
+		var player = new Player(params);
+		var newPlayer = params;
+		newPlayer.id = player.id;
+		this.activePlayerId = player.id;
 
-        /*
-        if (this.playersCount >= 2) {
-            var controls = {
-                'up': 'up2',
-                'left': 'left2',
-                'down': 'down2',
-                'right': 'right2',
-                'bomb': 'bomb2'
-            };
-            var player2 = new Player({ x: this.tilesX - 2, y: this.tilesY - 2 }, controls, 1);
-            this.players.push(player2);
-        }
-        */
+		socket.emit('newPlayer', newPlayer);
+		this.cleanTerrainForPlayer(player);
+		this.players.push(player);
+
     },
 
     cleanTerrainForPlayer: function(player) {

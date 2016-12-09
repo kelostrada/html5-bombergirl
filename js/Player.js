@@ -55,9 +55,9 @@ Player = Entity.extend({
 
     init: function(position, controls, id) {
 
-        /*if (id) {
+        if (id) {
             this.id = id;
-        }*/
+        }
 
         if (controls) {
             this.controls = controls;
@@ -114,6 +114,14 @@ Player = Entity.extend({
 				});
 			}
 		});
+
+		socket.on('updatePosition', function (data) {
+			if(data.id === that.id) {
+				that.bmp.x = data.x;
+				that.bmp.y = data.y;
+				that.updatePosition();
+			}
+		});
     },
 
     setBombsListener: function() {
@@ -163,6 +171,10 @@ Player = Entity.extend({
             return;
         }
         if (gGameEngine.menu.visible) {
+            return;
+        }
+
+        if(gGameEngine.activePlayerId !== this.id) {
             return;
         }
         var position = { x: this.bmp.x, y: this.bmp.y };
@@ -215,6 +227,13 @@ Player = Entity.extend({
                     this.bmp.y = position.y;
                     this.updatePosition();
                 }
+
+				var params = {
+					id: this.id,
+					x: this.bmp.x,
+					y: this.bmp.y
+				};
+				socket.emit('updatePosition', params);
             }
         }
 

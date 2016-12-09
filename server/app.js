@@ -4,7 +4,7 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
 
-app.use(express.static(__dirname+'/..'))
+app.use(express.static(__dirname+'/..'));
 
 io.sockets.on('connection', function (socket) {
 
@@ -12,11 +12,21 @@ io.sockets.on('connection', function (socket) {
 		socket.broadcast.emit('bomb', data);
 	});
 
+
+	socket.on('newPlayer', function (data) {
+		socket.broadcast.emit('newPlayer', data);
+	});
+
+	socket.on('updatePosition', function (data) {
+		socket.broadcast.emit('updatePosition', data);
+	});
+
 	socket.on('wood', function (data) {
 		socket.broadcast.emit('wood', data);
 	});
 
 });
+
 var port = (process.env.PORT || 4001);
 server.listen(port, function () {
 	console.log('listening on *:' + port);

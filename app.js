@@ -1,8 +1,7 @@
-var express = require('express')
-var app = express()
+var socket = io.connect('http://127.0.0.1:4001');
 
-app.use(express.static('.'))
+window.onload = function(){
+	gGameEngine.load();
+};
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
-})
+

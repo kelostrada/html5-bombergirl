@@ -302,7 +302,7 @@ Bot = Player.extend({
         }
 
         if (this.bombs.length < this.bombsMax) {
-            var bomb = new Bomb(this.position, this.bombStrength);
+            /*var bomb = new Bomb(this.position, this.bombStrength);
             gGameEngine.stage.addChild(bomb.bmp);
             this.bombs.push(bomb);
             gGameEngine.bombs.push(bomb);
@@ -311,7 +311,7 @@ Bot = Player.extend({
             bomb.setExplodeListener(function() {
                 Utils.removeFromArray(that.bombs, bomb);
                 that.wait = false;
-            });
+            });*/
         }
     },
 

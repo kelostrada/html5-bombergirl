@@ -1,11 +1,11 @@
 GameEngine = Class.extend({
     tileSize: 32,
-    tilesX: 17,
-    tilesY: 13,
+    tilesX: 21,
+    tilesY: 21,
     size: {},
     fps: 50,
-    botsCount: 2, /* 0 - 3 */
-    playersCount: 2, /* 1 - 2 */
+    botsCount: 0, /* 0 - 3 */
+    playersCount: 1, /* 1 - 2 */
     bonusesPercent: 16,
 
     stage: null,
@@ -170,6 +170,10 @@ GameEngine = Class.extend({
             bomb.update();
         }
 
+        // World
+        // iterate over all tiles and recreate wood after some random Timeout
+        gGameEngine.respawnWood();
+
         // Menu
         gGameEngine.menu.update();
 
@@ -177,10 +181,47 @@ GameEngine = Class.extend({
         gGameEngine.stage.update();
     },
 
-    drawTiles: function() {
+    respawnWood: function() {
         for (var i = 0; i < this.tilesY; i++) {
             for (var j = 0; j < this.tilesX; j++) {
-                if ((i == 0 || j == 0 || i == this.tilesY - 1 || j == this.tilesX - 1)
+                var tileMaterial = this.getTileMaterial({ x: j, y: i });
+
+                if(tileMaterial == "grass" && this.checkMinimumDistanceBetweenPlayers({ x: j, y: i }) && Math.random() > 0.99){
+                    var wood = new Tile('wood', { x: j, y: i });
+
+                    this.stage.addChild(wood.bmp);
+                    this.tiles.push(wood);
+                }
+            }
+        }
+    },
+
+    checkMinimumDistanceBetweenPlayers: function(pos) {
+        for (var i = 0; i < gGameEngine.players.length; i++) {
+            var player = gGameEngine.players[i];
+            
+            var playersDist = Utils.distance(player.position, pos);
+            if(playersDist < 5) {
+                return false;
+            }
+        }
+
+        for (var i = 0; i < gGameEngine.bots.length; i++) {
+            var bot = gGameEngine.bots[i];
+            
+            var botsDist = Utils.distance(bot.position, pos);
+            if(botsDist < 5) {
+                return false;
+            }
+        }
+
+        return true;
+    },
+
+    drawTiles: function() {
+        for (var i = -10; i < this.tilesY + 10; i++) {
+            for (var j = -10; j < this.tilesX + 10; j++) {
+                if ((i <= 0 || j <= 0 || i >= this.tilesY - 1 || j >= this.tilesX - 1)
                     || (j % 2 == 0 && i % 2 == 0)) {
                     // Wall tiles
                     var tile = new Tile('wall', { x: j, y: i });
@@ -252,24 +293,10 @@ GameEngine = Class.extend({
     spawnBots: function() {
         this.bots = [];
 
-        if (this.botsCount >= 1) {
-            var bot2 = new Bot({ x: 1, y: this.tilesY - 2 });
-            this.bots.push(bot2);
-        }
-
-        if (this.botsCount >= 2) {
-            var bot3 = new Bot({ x: this.tilesX - 2, y: 1 });
-            this.bots.push(bot3);
-        }
-
-        if (this.botsCount >= 3) {
-            var bot = new Bot({ x: this.tilesX - 2, y: this.tilesY - 2 });
-            this.bots.push(bot);
-        }
-
-        if (this.botsCount >= 4) {
-            var bot = new Bot({ x: 1, y: 1 });
-            this.bots.push(bot);
+        for (var i = 0; i < this.botsCount; i++) {
+          var bot = new Bot({ x: Math.floor((Math.random() * gGameEngine.tilesX) + 1), y: Math.floor((Math.random() * gGameEngine.tilesY) + 1) });
+          this.cleanTerrainForPlayer(bot);
+          this.bots.push(bot);
         }
     },
 
@@ -277,10 +304,12 @@ GameEngine = Class.extend({
         this.players = [];
 
         if (this.playersCount >= 1) {
-            var player = new Player({ x: 1, y: 1 });
+            var player = new Player({ x: Math.floor((Math.random() * gGameEngine.tilesX) + 1), y: Math.floor((Math.random() * gGameEngine.tilesY) + 1) });
+            this.cleanTerrainForPlayer(player);
             this.players.push(player);
         }
 
+        /*
         if (this.playersCount >= 2) {
             var controls = {
                 'up': 'up2',
@@ -292,6 +321,34 @@ GameEngine = Class.extend({
             var player2 = new Player({ x: this.tilesX - 2, y: this.tilesY - 2 }, controls, 1);
             this.players.push(player2);
         }
+        */
+    },
+
+    cleanTerrainForPlayer: function(player) {
+      var position = {x: player.position.x, y: player.position.y};
+      this.cleanTileForPlayer(position);
+      position.x--;
+      this.cleanTileForPlayer(position);
+      position.y--;
+      position.x++;
+      this.cleanTileForPlayer(position);
+      position.x++;
+      position.y++;
+      this.cleanTileForPlayer(position);
+      position.x--;
+      position.y++;
+      this.cleanTileForPlayer(position);
+    },
+
+    cleanTileForPlayer: function(position) {
+      var tile = this.getTile(position);
+      if (tile) {
+        tile.remove();
+        if (tile.material == 'wall') {
+          var tile = new Tile('grass', position);
+          this.stage.addChildAt(tile.bmp, 0);
+        }
+      }
     },
 
     /**

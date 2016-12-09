@@ -168,6 +168,10 @@ Player = Entity.extend({
         }
         var position = { x: this.bmp.x, y: this.bmp.y };
 
+        // Update stage based on user position
+        gGameEngine.stage.regX = position.x - gGameEngine.stage.canvas.width / 2;
+        gGameEngine.stage.regY = position.y - gGameEngine.stage.canvas.height / 2;
+
         var dirX = 0;
         var dirY = 0;
         if (gInputEngine.actions[this.controls.up]) {

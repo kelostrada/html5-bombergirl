@@ -53,14 +53,13 @@ GameEngine = Class.extend({
 		});
 
 		socket.on('playersList', function (data) {
-		    console.log('playersList', data);
-		    if(this.getPlayerList) {
-		        _.forEach(this.getPlayerList, function(data) {
-					var player = new Player(data, null, data.id);
+		    if(that.getPlayerList) {
+		        _.forEach(data, function(playerData) {
+					var player = new Player(data, null, playerData.id);
 					that.cleanTerrainForPlayer(player);
 					that.players.push(player);
                 });
-				this.getPlayerList = false;
+				that.getPlayerList = false;
             }
 		});
 

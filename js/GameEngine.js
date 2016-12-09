@@ -37,6 +37,16 @@ GameEngine = Class.extend({
         };
     },
 
+	setWSListener: function() {
+		var that = this;
+
+		socket.on('newPlayer', function (data) {
+			var player = new Player(data, null, data.id);
+			that.cleanTerrainForPlayer(player);
+			that.players.push(player);
+		});
+	},
+
     load: function() {
         // Init canvas
         this.stage = new createjs.Stage("canvas");
@@ -76,6 +86,8 @@ GameEngine = Class.extend({
 
         // Create menu
         this.menu = new Menu();
+
+		this.setWSListener();
     },
 
     setup: function() {
@@ -303,11 +315,23 @@ GameEngine = Class.extend({
     spawnPlayers: function() {
         this.players = [];
 
-        if (this.playersCount >= 1) {
-            var player = new Player({ x: Math.floor((Math.random() * gGameEngine.tilesX) + 1), y: Math.floor((Math.random() * gGameEngine.tilesY) + 1) });
-            this.cleanTerrainForPlayer(player);
-            this.players.push(player);
-        }
+        //if (this.playersCount >= 1) {
+		var params = {
+			x: Math.floor((Math.random() * gGameEngine.tilesX) + 1),
+			y: Math.floor((Math.random() * gGameEngine.tilesY) + 1)
+		};
+		var player = new Player(params);
+		var newPlayer = params;
+		newPlayer.id = player.id;
+		this.activePlayerId = player.id;
+
+		socket.emit('newPlayer', newPlayer);
+		this.cleanTerrainForPlayer(player);
+		this.players.push(player);
+
+
+
+        //}
 
         /*
         if (this.playersCount >= 2) {

@@ -9,6 +9,14 @@ io.sockets.on('connection', function (socket) {
 		socket.broadcast.emit('bomb', data);
 	});
 
+	socket.on('newPlayer', function (data) {
+		socket.broadcast.emit('newPlayer', data);
+	});
+
+	socket.on('updatePosition', function (data) {
+		socket.broadcast.emit('updatePosition', data);
+	});
+
 });
 
 http.listen(4001, function () {

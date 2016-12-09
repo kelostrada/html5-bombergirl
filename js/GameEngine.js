@@ -37,6 +37,17 @@ GameEngine = Class.extend({
         };
     },
 
+    setWSListener: function() {
+		var that = this;
+
+		socket.on('wood', function (data) {
+			var wood = new Tile('wood', data);
+
+            this.stage.addChild(wood.bmp);
+            this.tiles.push(wood);
+		});
+    },
+
     load: function() {
         // Init canvas
         this.stage = new createjs.Stage("canvas");
@@ -76,6 +87,8 @@ GameEngine = Class.extend({
 
         // Create menu
         this.menu = new Menu();
+
+        this.setWSListener();
     },
 
     setup: function() {
@@ -184,24 +197,27 @@ GameEngine = Class.extend({
     respawnWood: function() {
         for (var i = 0; i < this.tilesY; i++) {
             for (var j = 0; j < this.tilesX; j++) {
-                var tileMaterial = this.getTileMaterial({ x: j, y: i });
+                var pos = { x: j, y: i };
+                var tileMaterial = this.getTileMaterial(pos);
 
-                if(tileMaterial == "grass" && this.checkMinimumDistanceBetweenPlayers({ x: j, y: i }) && Math.random() > 0.99){
-                    var wood = new Tile('wood', { x: j, y: i });
+                if(tileMaterial == "grass" && this.checkMinimumDistanceBetweenPlayers(pos, 7) && Math.random() > 0.999){
+                    var wood = new Tile('wood', pos);
 
                     this.stage.addChild(wood.bmp);
                     this.tiles.push(wood);
+
+                    socket.emit('bomb', pos);
                 }
             }
         }
     },
 
-    checkMinimumDistanceBetweenPlayers: function(pos) {
+    checkMinimumDistanceBetweenPlayers: function(pos, minimumDistance) {
         for (var i = 0; i < gGameEngine.players.length; i++) {
             var player = gGameEngine.players[i];
 
             var playersDist = Utils.distance(player.position, pos);
-            if(playersDist < 5) {
+            if(playersDist < minimumDistance) {
                 return false;
             }
         }
@@ -210,7 +226,7 @@ GameEngine = Class.extend({
             var bot = gGameEngine.bots[i];
 
             var botsDist = Utils.distance(bot.position, pos);
-            if(botsDist < 5) {
+            if(botsDist < minimumDistance) {
                 return false;
             }
         }

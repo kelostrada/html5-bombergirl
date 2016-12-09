@@ -104,7 +104,6 @@ Player = Entity.extend({
 		socket.on('bomb', function (data) {
 			if(data.userId !== that.id) {
 				var bomb = new Bomb(data.position, data.bombStrength);
-				console.log('bomb', bomb);
 
 				gGameEngine.stage.addChild(bomb.bmp);
 				that.bombs.push(bomb);

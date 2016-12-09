@@ -1,5 +1,5 @@
 Player = Entity.extend({
-    id: 0,
+    id: Date.now(),
 
     /**
      * Moving speed
@@ -54,9 +54,10 @@ Player = Entity.extend({
     deadTimer: 0,
 
     init: function(position, controls, id) {
-        if (id) {
+
+        /*if (id) {
             this.id = id;
-        }
+        }*/
 
         if (controls) {
             this.controls = controls;
@@ -94,6 +95,26 @@ Player = Entity.extend({
 
         this.bombs = [];
         this.setBombsListener();
+        this.setWSListener();
+    },
+
+    setWSListener: function() {
+		var that = this;
+
+		socket.on('bomb', function (data) {
+			if(data.userId !== that.id) {
+				var bomb = new Bomb(data.position, data.bombStrength);
+				console.log('bomb', bomb);
+
+				gGameEngine.stage.addChild(bomb.bmp);
+				that.bombs.push(bomb);
+				gGameEngine.bombs.push(bomb);
+
+				bomb.setExplodeListener(function() {
+					Utils.removeFromArray(that.bombs, bomb);
+				});
+			}
+		});
     },
 
     setBombsListener: function() {
@@ -118,6 +139,13 @@ Player = Entity.extend({
 
                 if (unexplodedBombs < that.bombsMax) {
                     var bomb = new Bomb(that.position, that.bombStrength);
+                    var params = {
+                        userId: that.id,
+                        position: that.position,
+						bombStrength: that.bombStrength
+                    };
+					socket.emit('bomb', params);
+
                     gGameEngine.stage.addChild(bomb.bmp);
                     that.bombs.push(bomb);
                     gGameEngine.bombs.push(bomb);

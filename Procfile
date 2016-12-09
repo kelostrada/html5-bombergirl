@@ -1,1 +1,1 @@
-web: node server/app.js
+web: npm install && bower install && node server/app.js

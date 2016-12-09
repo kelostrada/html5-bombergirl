@@ -178,9 +178,9 @@ GameEngine = Class.extend({
     },
 
     drawTiles: function() {
-        for (var i = 0; i < this.tilesY; i++) {
-            for (var j = 0; j < this.tilesX; j++) {
-                if ((i == 0 || j == 0 || i == this.tilesY - 1 || j == this.tilesX - 1)
+        for (var i = -10; i < this.tilesY + 10; i++) {
+            for (var j = -10; j < this.tilesX + 10; j++) {
+                if ((i <= 0 || j <= 0 || i >= this.tilesY - 1 || j >= this.tilesX - 1)
                     || (j % 2 == 0 && i % 2 == 0)) {
                     // Wall tiles
                     var tile = new Tile('wall', { x: j, y: i });
